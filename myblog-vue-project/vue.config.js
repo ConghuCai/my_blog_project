@@ -4,13 +4,12 @@ module.exports = {
     port: 9802, // 端口号
     proxy: {
       '/api': {
-        target: 'http://47.96.39.11:31415',
+        target: 'http://后端服务器url',
         pathRewrite: { '^/api': '' }
       }
     }
   },
 
-  // 这个到打包的时候再加上！！！
-  // '/线上地址'
+  // 这个打包的时候会加上！！！
   publicPath: 'http://cdn.conghucai.site/myblog/page/'
 }
