@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="site.conghucai.blogms.mapper.MessageMapper">
+  <resultMap id="BaseResultMap" type="site.conghucai.blogms.model.Message">
+    <id column="id" jdbcType="CHAR" property="id" />
+    <result column="user" jdbcType="VARCHAR" property="user" />
+    <result column="time" jdbcType="CHAR" property="time" />
+    <result column="message" jdbcType="VARCHAR" property="message" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user, time, message
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_message
+    where id = #{id,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_message
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="site.conghucai.blogms.model.Message">
+    insert into t_message (id, user, time, message
+      )
+    values (#{id,jdbcType=CHAR}, #{user,jdbcType=VARCHAR}, #{time,jdbcType=CHAR}, #{message,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="site.conghucai.blogms.model.Message">
+    insert into t_message
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="user != null">
+        user,
+      </if>
+      <if test="time != null">
+        time,
+      </if>
+      <if test="message != null">
+        message,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="user != null">
+        #{user,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null">
+        #{time,jdbcType=CHAR},
+      </if>
+      <if test="message != null">
+        #{message,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="site.conghucai.blogms.model.Message">
+    update t_message
+    <set>
+      <if test="user != null">
+        user = #{user,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null">
+        time = #{time,jdbcType=CHAR},
+      </if>
+      <if test="message != null">
+        message = #{message,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="site.conghucai.blogms.model.Message">
+    update t_message
+    set user = #{user,jdbcType=VARCHAR},
+      time = #{time,jdbcType=CHAR},
+      message = #{message,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+
+  <select id="getCount" resultType="Integer">
+    select count(id) from t_message
+  </select>
+
+  <select id="selectMessageAndCommentCountByDay" parameterType="String" resultType="Map">
+    select sum(res) as res
+    from
+    (
+        (
+        select count(id) as res
+        from t_comment
+        where time like "%" #{date} "%"
+        )
+        union all
+        (
+            select count(id) as res
+            from t_message
+            where time like "%" #{date} "%"
+        )
+    ) as t
+  </select>
+
+  <select id="selectAllMessageList" resultType="Map">
+    select m.id, ifnull(u.login, '用户已被删除') as login, ifnull(u.`name`, '用户已被删除') as `name`, m.time, m.message as msg,
+    ifnull(u.avatar_url, 'https://gitee.com/assets/no_portrait.png') as avatar
+    from t_message m left join t_user u on m.`user` = u.login
+  </select>
+
+</mapper>

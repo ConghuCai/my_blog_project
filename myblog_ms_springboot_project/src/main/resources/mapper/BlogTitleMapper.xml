@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="site.conghucai.blogms.mapper.BlogTitleMapper">
+  <resultMap id="BaseResultMap" type="site.conghucai.blogms.model.BlogTitle">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="blogName" jdbcType="VARCHAR" property="blogname" />
+    <result column="shortName" jdbcType="VARCHAR" property="shortname" />
+    <result column="blogAvatar" jdbcType="VARCHAR" property="blogavatar" />
+    <result column="giteeLogo" jdbcType="VARCHAR" property="giteelogo" />
+    <result column="loginBack" jdbcType="VARCHAR" property="loginback" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, blogName, shortName, blogAvatar, giteeLogo, loginBack
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_blog_title
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_blog_title
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="site.conghucai.blogms.model.BlogTitle">
+    insert into t_blog_title (id, blogName, shortName, 
+      blogAvatar, giteeLogo, loginBack
+      )
+    values (#{id,jdbcType=VARCHAR}, #{blogname,jdbcType=VARCHAR}, #{shortname,jdbcType=VARCHAR}, 
+      #{blogavatar,jdbcType=VARCHAR}, #{giteelogo,jdbcType=VARCHAR}, #{loginback,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="site.conghucai.blogms.model.BlogTitle">
+    insert into t_blog_title
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="blogname != null">
+        blogName,
+      </if>
+      <if test="shortname != null">
+        shortName,
+      </if>
+      <if test="blogavatar != null">
+        blogAvatar,
+      </if>
+      <if test="giteelogo != null">
+        giteeLogo,
+      </if>
+      <if test="loginback != null">
+        loginBack,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="blogname != null">
+        #{blogname,jdbcType=VARCHAR},
+      </if>
+      <if test="shortname != null">
+        #{shortname,jdbcType=VARCHAR},
+      </if>
+      <if test="blogavatar != null">
+        #{blogavatar,jdbcType=VARCHAR},
+      </if>
+      <if test="giteelogo != null">
+        #{giteelogo,jdbcType=VARCHAR},
+      </if>
+      <if test="loginback != null">
+        #{loginback,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="site.conghucai.blogms.model.BlogTitle">
+    update t_blog_title
+    <set>
+      <if test="blogname != null">
+        blogName = #{blogname,jdbcType=VARCHAR},
+      </if>
+      <if test="shortname != null">
+        shortName = #{shortname,jdbcType=VARCHAR},
+      </if>
+      <if test="blogavatar != null">
+        blogAvatar = #{blogavatar,jdbcType=VARCHAR},
+      </if>
+      <if test="giteelogo != null">
+        giteeLogo = #{giteelogo,jdbcType=VARCHAR},
+      </if>
+      <if test="loginback != null">
+        loginBack = #{loginback,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="site.conghucai.blogms.model.BlogTitle">
+    update t_blog_title
+    set blogName = #{blogname,jdbcType=VARCHAR},
+      shortName = #{shortname,jdbcType=VARCHAR},
+      blogAvatar = #{blogavatar,jdbcType=VARCHAR},
+      giteeLogo = #{giteelogo,jdbcType=VARCHAR},
+      loginBack = #{loginback,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <select id="selectBlogAvatarAndBackground" parameterType="java.lang.String" resultType="map">
+    select blogAvatar as avatar, loginBack as background
+    from t_blog_title
+    where id = #{id}
+  </select>
+</mapper>

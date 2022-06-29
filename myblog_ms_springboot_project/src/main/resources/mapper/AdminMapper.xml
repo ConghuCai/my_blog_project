@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="site.conghucai.blogms.mapper.AdminMapper">
+  <resultMap id="BaseResultMap" type="site.conghucai.blogms.model.Admin">
+    <id column="name" jdbcType="VARCHAR" property="name" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="role" jdbcType="VARCHAR" property="role" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="avatar" jdbcType="VARCHAR" property="avatar" />
+    <result column="time" jdbcType="CHAR" property="time" />
+    <result column="count" jdbcType="INTEGER" property="count" />
+    <result column="enable" jdbcType="BIT" property="enable" />
+    <result column="not_locked" jdbcType="BIT" property="notLocked" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    name, password, role, email, avatar, time, count, enable, not_locked
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_admin
+    where name = #{name,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from t_admin
+    where name = #{name,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="site.conghucai.blogms.model.Admin">
+    insert into t_admin (name, password, role, 
+      email, avatar, time, count, 
+      enable, not_locked)
+    values (#{name,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{role,jdbcType=VARCHAR}, 
+      #{email,jdbcType=VARCHAR}, #{avatar,jdbcType=VARCHAR}, #{time,jdbcType=CHAR}, #{count,jdbcType=INTEGER}, 
+      #{enable,jdbcType=BIT}, #{notLocked,jdbcType=BIT})
+  </insert>
+  <insert id="insertSelective" parameterType="site.conghucai.blogms.model.Admin">
+    insert into t_admin
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        name,
+      </if>
+      <if test="password != null">
+        password,
+      </if>
+      <if test="role != null">
+        role,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+      <if test="avatar != null">
+        avatar,
+      </if>
+      <if test="time != null">
+        time,
+      </if>
+      <if test="count != null">
+        count,
+      </if>
+      <if test="enable != null">
+        enable,
+      </if>
+      <if test="notLocked != null">
+        not_locked,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="role != null">
+        #{role,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="avatar != null">
+        #{avatar,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null">
+        #{time,jdbcType=CHAR},
+      </if>
+      <if test="count != null">
+        #{count,jdbcType=INTEGER},
+      </if>
+      <if test="enable != null">
+        #{enable,jdbcType=BIT},
+      </if>
+      <if test="notLocked != null">
+        #{notLocked,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="site.conghucai.blogms.model.Admin">
+    update t_admin
+    <set>
+      <if test="password != null">
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="role != null">
+        role = #{role,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="avatar != null">
+        avatar = #{avatar,jdbcType=VARCHAR},
+      </if>
+      <if test="time != null">
+        time = #{time,jdbcType=CHAR},
+      </if>
+      <if test="count != null">
+        count = #{count,jdbcType=INTEGER},
+      </if>
+      <if test="enable != null">
+        enable = #{enable,jdbcType=BIT},
+      </if>
+      <if test="notLocked != null">
+        not_locked = #{notLocked,jdbcType=BIT},
+      </if>
+    </set>
+    where name = #{name,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="site.conghucai.blogms.model.Admin">
+    update t_admin
+    set password = #{password,jdbcType=VARCHAR},
+      role = #{role,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      avatar = #{avatar,jdbcType=VARCHAR},
+      time = #{time,jdbcType=CHAR},
+      count = #{count,jdbcType=INTEGER},
+      enable = #{enable,jdbcType=BIT},
+      not_locked = #{notLocked,jdbcType=BIT}
+    where name = #{name,jdbcType=VARCHAR}
+  </update>
+
+  <select id="selectUserInfo" parameterType="java.lang.String" resultType="map">
+    select name, avatar, role
+    from t_admin
+    where name = #{name}
+  </select>
+
+  <update id="updateAddCount" parameterType="String">
+    update t_admin set count = count + 1 where  name = #{name}
+  </update>
+
+  <update id="updateMinusCount" parameterType="String">
+    update t_admin set count = count - 1 where  name = #{name}
+  </update>
+
+  <select id="selectAllAdminList" resultType="Map">
+    select `name`, count, time, avatar, email
+    from t_admin
+    where `enable` = 1 and not_locked = 1
+  </select>
+</mapper>

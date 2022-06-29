@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="site.conghucai.blogms.mapper.TagMapper">
+  <resultMap id="BaseResultMap" type="site.conghucai.blogms.model.Tag">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="count" jdbcType="INTEGER" property="count" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, name, count
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_tag
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_tag
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="site.conghucai.blogms.model.Tag">
+    insert into t_tag (id, name, count
+      )
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{count,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="site.conghucai.blogms.model.Tag">
+    insert into t_tag
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="count != null">
+        count,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="count != null">
+        #{count,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="site.conghucai.blogms.model.Tag">
+    update t_tag
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="count != null">
+        count = #{count,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="site.conghucai.blogms.model.Tag">
+    update t_tag
+    set name = #{name,jdbcType=VARCHAR},
+      count = #{count,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectTagArticleStat" resultType="Map">
+    select t.`name`, sum(a.click_count)/count(a.id) as aClick,
+    (sum(a.comment_count) + sum(a.share_count) + sum(a.like_count))/count(a.id) as aInter
+    from t_tag t
+    left join t_ref_article_tag rat on t.`name` = rat.tag
+    left join t_article a on rat.article_id = a.id
+    group by t.`name`
+    order by aClick desc, aInter desc
+    limit 0, 5
+  </select>
+
+  <select id="selectTagNameList" resultType="map">
+    select `name` as label, `name` as `value`, count
+    from t_tag
+  </select>
+
+  <!--使用ignore关键字插入  自动忽略已经存在的行-->
+  <insert id="insertTagsBatch" parameterType="List">
+    insert ignore into t_tag
+    (
+      `name`
+    )
+    values
+    <foreach collection="list" item="tagName" separator=",">
+    (
+      #{tagName}
+    )
+    </foreach>
+  </insert>
+
+  <insert id="insertArticleTagRefRecordBatch" parameterType="List">
+    insert ignore into t_ref_article_tag
+    (
+        article_id, tag
+    )
+    values
+    <foreach collection="list" item="item" separator=",">
+    (
+      #{item.article_id}, #{item.tag}
+    )
+    </foreach>
+  </insert>
+
+  <select id="selectRefByArticleID" parameterType="java.lang.String" resultType="java.lang.String">
+    select
+        tag
+    from t_ref_article_tag
+    where article_id = #{articleID}
+  </select>
+
+  <delete id="deleteRefByArticleID" parameterType="String">
+    delete from t_ref_article_tag where article_id = #{articleID}
+  </delete>
+
+  <update id="addCountByNames" parameterType="List">
+    update t_tag set `count` = `count`+1
+    <where>
+      <foreach collection="list" item="tagName">
+        or `name` = #{tagName}
+      </foreach>
+    </where>
+  </update>
+  <update id="minusCountByNames" parameterType="List">
+    update t_tag set `count` = `count`-1
+    <where>
+      <foreach collection="list" item="tagName">
+        or `name` = #{tagName}
+      </foreach>
+    </where>
+  </update>
+  
+  <update id="updateTagByName" parameterType="String">
+    update t_tag set `name` = #{newName} where `name` = #{oldName}
+  </update>
+
+  <update id="updateRefByName" parameterType="String">
+    update t_ref_article_tag set tag = #{newName} where tag = #{oldName}
+  </update>
+
+  <delete id="deleteTagByName" parameterType="String">
+    delete from t_tag where `name` = #{name}
+  </delete>
+
+  <delete id="deleteRefByName" parameterType="String">
+    delete from t_ref_article_tag where tag = #{name}
+  </delete>
+</mapper>
